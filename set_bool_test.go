@@ -1,4 +1,4 @@
-package setvsfastset_test
+package setvsbitset_test
 
 import (
 	"math/rand/v2"

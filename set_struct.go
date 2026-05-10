@@ -1,4 +1,4 @@
-package setvsfastset
+package setvsbitset
 
 type SetStruct[T comparable] struct {
 	set map[T]struct{}

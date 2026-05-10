@@ -1,4 +1,4 @@
-package setvsfastset_test
+package setvsbitset_test
 
 import (
 	"math/rand/v2"
@@ -42,7 +42,7 @@ func BenchmarkStructSetAdd(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		validStr = append(validStr, generateRandomString(strlen, "hit_"))
 	}
-	
+
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {

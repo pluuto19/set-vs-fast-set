@@ -1,4 +1,4 @@
-package setvsfastset
+package setvsbitset
 
 type SetBool[T comparable] struct {
 	set map[T]bool
