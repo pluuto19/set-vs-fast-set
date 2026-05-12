@@ -6,8 +6,6 @@ import (
 	"testing"
 )
 
-const universe = 1 << 24
-
 func seedBitSet(n int) (*s.BitSet, []int64) {
 	set := s.NewBitSet(universe)
 	validInts := make([]int64, 0, n)
@@ -46,54 +44,12 @@ func BenchmarkBitSetDelete(b *testing.B) {
 	}
 }
 
-func BenchmarkBitSetContainsBest(b *testing.B) {
+func BenchmarkBitSetContains(b *testing.B) {
 	b.StopTimer()
 	set, validInts := seedBitSet(b.N)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		set.Contains(validInts[i])
-	}
-}
-
-func BenchmarkBitSetContainsWorst(b *testing.B) {
-	b.StopTimer()
-	set := s.NewBitSet(universe)
-
-	// invalidInts are values guaranteed not in the set (empty set, all misses)
-	invalidInts := make([]int64, 0, b.N)
-	for i := 0; i < b.N; i++ {
-		invalidInts = append(invalidInts, int64(rand.IntN(universe)))
-	}
-
-	b.StartTimer()
-
-	for i := 0; i < b.N; i++ {
-		set.Contains(invalidInts[i])
-	}
-}
-
-func BenchmarkBitSetContainsAvg(b *testing.B) {
-	b.StopTimer()
-	set, validInts := seedBitSet(b.N)
-
-	invalidInts := make([]int64, 0, b.N)
-	for i := 0; i < b.N; i++ {
-		invalidInts = append(invalidInts, int64(rand.IntN(universe)))
-	}
-
-	bools := make([]bool, 0, b.N)
-	for i := 0; i < b.N; i++ {
-		bools = append(bools, rand.IntN(2) == 0)
-	}
-
-	b.StartTimer()
-
-	for i := 0; i < b.N; i++ {
-		if bools[i] {
-			set.Contains(validInts[i])
-		} else {
-			set.Contains(invalidInts[i])
-		}
 	}
 }

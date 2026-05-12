@@ -44,53 +44,12 @@ func BenchmarkBoolSetDelete(b *testing.B) {
 	}
 }
 
-func BenchmarkBoolSetContainsBest(b *testing.B) {
+func BenchmarkBoolSetContains(b *testing.B) {
 	b.StopTimer()
 	set, validInts := seedBoolSet(b.N)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		set.Contains(validInts[i])
-	}
-}
-
-func BenchmarkBoolSetContainsWorst(b *testing.B) {
-	b.StopTimer()
-	set := s.NewSetBool[int64](b.N)
-
-	invalidInts := make([]int64, 0, b.N)
-	for i := 0; i < b.N; i++ {
-		invalidInts = append(invalidInts, int64(rand.IntN(universe)))
-	}
-
-	b.StartTimer()
-
-	for i := 0; i < b.N; i++ {
-		set.Contains(invalidInts[i])
-	}
-}
-
-func BenchmarkBoolSetContainsAvg(b *testing.B) {
-	b.StopTimer()
-	set, validInts := seedBoolSet(b.N)
-
-	invalidInts := make([]int64, 0, b.N)
-	for i := 0; i < b.N; i++ {
-		invalidInts = append(invalidInts, int64(rand.IntN(universe)))
-	}
-
-	bools := make([]bool, 0, b.N)
-	for i := 0; i < b.N; i++ {
-		bools = append(bools, rand.IntN(2) == 0)
-	}
-
-	b.StartTimer()
-
-	for i := 0; i < b.N; i++ {
-		if bools[i] {
-			set.Contains(validInts[i])
-		} else {
-			set.Contains(invalidInts[i])
-		}
 	}
 }
