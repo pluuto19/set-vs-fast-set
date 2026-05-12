@@ -6,77 +6,77 @@ import (
 	"testing"
 )
 
-func seedBoolSet(n int) (*s.SetBool[string], []string) {
-	set := s.NewSetBool[string](n)
-	validStrings := make([]string, 0, n)
+func seedBoolSet(n int) (*s.SetBool[int64], []int64) {
+	set := s.NewSetBool[int64](n)
+	validInts := make([]int64, 0, n)
 	for i := 0; i < n; i++ {
-		str := generateRandomString(strlen, "hit_")
-		set.Add(str)
-		validStrings = append(validStrings, str)
+		v := int64(rand.IntN(universe))
+		set.Add(v)
+		validInts = append(validInts, v)
 	}
 
-	return set, validStrings
+	return set, validInts
 }
 
 func BenchmarkBoolSetAdd(b *testing.B) {
 	b.StopTimer()
-	set := s.NewSetBool[string](b.N)
-	validStr := make([]string, 0, b.N)
+	set := s.NewSetBool[int64](b.N)
+	validInts := make([]int64, 0, b.N)
 
 	for i := 0; i < b.N; i++ {
-		validStr = append(validStr, generateRandomString(strlen, "hit_"))
+		validInts = append(validInts, int64(rand.IntN(universe)))
 	}
 
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		set.Add(validStr[i])
+		set.Add(validInts[i])
 	}
 }
 
 func BenchmarkBoolSetDelete(b *testing.B) {
 	b.StopTimer()
-	set, validStr := seedBoolSet(b.N)
+	set, validInts := seedBoolSet(b.N)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		set.Delete(validStr[i])
+		set.Delete(validInts[i])
 	}
 }
 
 func BenchmarkBoolSetContainsBest(b *testing.B) {
 	b.StopTimer()
-	set, validStr := seedBoolSet(b.N)
+	set, validInts := seedBoolSet(b.N)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		set.Contains(validStr[i])
+		set.Contains(validInts[i])
 	}
 }
 
 func BenchmarkBoolSetContainsWorst(b *testing.B) {
 	b.StopTimer()
-	set, _ := seedBoolSet(b.N)
+	set := s.NewSetBool[int64](b.N)
 
-	invalidStr := make([]string, 0, b.N)
+	invalidInts := make([]int64, 0, b.N)
 	for i := 0; i < b.N; i++ {
-		invalidStr = append(invalidStr, generateRandomString(strlen, "miss_"))
+		invalidInts = append(invalidInts, int64(rand.IntN(universe)))
 	}
 
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		set.Contains(invalidStr[i])
+		set.Contains(invalidInts[i])
 	}
 }
 
 func BenchmarkBoolSetContainsAvg(b *testing.B) {
 	b.StopTimer()
-	set, validStr := seedBoolSet(b.N)
+	set, validInts := seedBoolSet(b.N)
 
-	invalidStr := make([]string, 0, b.N)
+	invalidInts := make([]int64, 0, b.N)
 	for i := 0; i < b.N; i++ {
-		invalidStr = append(invalidStr, generateRandomString(strlen, "miss_"))
+		invalidInts = append(invalidInts, int64(rand.IntN(universe)))
 	}
 
 	bools := make([]bool, 0, b.N)
@@ -88,9 +88,9 @@ func BenchmarkBoolSetContainsAvg(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		if bools[i] {
-			set.Contains(validStr[i])
+			set.Contains(validInts[i])
 		} else {
-			set.Contains(invalidStr[i])
+			set.Contains(invalidInts[i])
 		}
 	}
 }

@@ -3,96 +3,80 @@ package setvsbitset_test
 import (
 	"math/rand/v2"
 	s "sets-comparision"
-	"strings"
 	"testing"
 )
 
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-const strlen = 16
-
-func generateRandomString(n int, prefix string) string {
-	var sb = strings.Builder{}
-
-	sb.WriteString(prefix)
-
-	for j := 0; j < n; j++ {
-		sb.WriteByte(charset[rand.IntN(len(charset))])
-	}
-
-	return sb.String()
-}
-
-func seedStructSet(n int) (*s.SetStruct[string], []string) {
-	set := s.NewSetStruct[string](n)
-	validStrings := make([]string, 0, n)
+func seedStructSet(n int) (*s.SetStruct[int64], []int64) {
+	set := s.NewSetStruct[int64](n)
+	validInts := make([]int64, 0, n)
 	for i := 0; i < n; i++ {
-		str := generateRandomString(strlen, "hit_")
-		set.Add(str)
-		validStrings = append(validStrings, str)
+		v := int64(rand.IntN(universe))
+		set.Add(v)
+		validInts = append(validInts, v)
 	}
 
-	return set, validStrings
+	return set, validInts
 }
 
 func BenchmarkStructSetAdd(b *testing.B) {
 	b.StopTimer()
-	set := s.NewSetStruct[string](b.N)
-	validStr := make([]string, 0, b.N)
+	set := s.NewSetStruct[int64](b.N)
+	validInts := make([]int64, 0, b.N)
 
 	for i := 0; i < b.N; i++ {
-		validStr = append(validStr, generateRandomString(strlen, "hit_"))
+		validInts = append(validInts, int64(rand.IntN(universe)))
 	}
 
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		set.Add(validStr[i])
+		set.Add(validInts[i])
 	}
 }
 
 func BenchmarkStructSetDelete(b *testing.B) {
 	b.StopTimer()
-	set, validStr := seedStructSet(b.N)
+	set, validInts := seedStructSet(b.N)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		set.Delete(validStr[i])
+		set.Delete(validInts[i])
 	}
 }
 
 func BenchmarkStructSetContainsBest(b *testing.B) {
 	b.StopTimer()
-	set, validStr := seedStructSet(b.N)
+	set, validInts := seedStructSet(b.N)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		set.Contains(validStr[i])
+		set.Contains(validInts[i])
 	}
 }
 
 func BenchmarkStructSetContainsWorst(b *testing.B) {
 	b.StopTimer()
-	set, _ := seedStructSet(b.N)
+	set := s.NewSetStruct[int64](b.N)
 
-	invalidStr := make([]string, 0, b.N)
+	invalidInts := make([]int64, 0, b.N)
 	for i := 0; i < b.N; i++ {
-		invalidStr = append(invalidStr, generateRandomString(strlen, "miss_"))
+		invalidInts = append(invalidInts, int64(rand.IntN(universe)))
 	}
 
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		set.Contains(invalidStr[i])
+		set.Contains(invalidInts[i])
 	}
 }
 
 func BenchmarkStructSetContainsAvg(b *testing.B) {
 	b.StopTimer()
-	set, validStr := seedStructSet(b.N)
+	set, validInts := seedStructSet(b.N)
 
-	invalidStr := make([]string, 0, b.N)
+	invalidInts := make([]int64, 0, b.N)
 	for i := 0; i < b.N; i++ {
-		invalidStr = append(invalidStr, generateRandomString(strlen, "miss_"))
+		invalidInts = append(invalidInts, int64(rand.IntN(universe)))
 	}
 
 	bools := make([]bool, 0, b.N)
@@ -104,9 +88,9 @@ func BenchmarkStructSetContainsAvg(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		if bools[i] {
-			set.Contains(validStr[i])
+			set.Contains(validInts[i])
 		} else {
-			set.Contains(invalidStr[i])
+			set.Contains(invalidInts[i])
 		}
 	}
 }
