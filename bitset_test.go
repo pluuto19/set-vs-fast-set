@@ -2,7 +2,7 @@ package setvsbitset_test
 
 import (
 	"math/rand/v2"
-	s "sets-comparision"
+	s "sets-comparison"
 	"testing"
 )
 
